@@ -36,9 +36,6 @@ if (isset($_GET['generate_qr']) && isset($_GET['borrowing_id'])) {
             'type' => 'equipment_pickup',
             'borrowing_id' => $borrowing_id,
             'user_id' => $_SESSION['user_id'],
-            'username' => $borrowing['username'],
-            'equipment_name' => $borrowing['equipment_name'],
-            'quantity' => $borrowing['quantity'],
             'timestamp' => time(),
             'checksum' => md5($borrowing_id . $_SESSION['user_id'] . time())
         ]);
@@ -83,8 +80,8 @@ if (isset($_GET['confirm_pickup']) && isset($_GET['borrowing_id'])) {
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     
-    <!-- QRCode.js -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- QRCode.js (เปลี่ยน CDN ที่เสถียรกว่า) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         body { 
@@ -383,11 +380,11 @@ if (isset($_GET['confirm_pickup']) && isset($_GET['borrowing_id'])) {
             const qrData = <?php echo json_encode($qr_data); ?>;
             new QRCode(document.getElementById("qrcode"), {
                 text: qrData,
-                width: 256,
-                height: 256,
+                width: 300,
+                height: 300,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+                correctLevel: QRCode.CorrectLevel.M
             });
             
             // Auto refresh every 30 seconds

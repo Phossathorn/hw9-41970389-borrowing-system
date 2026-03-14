@@ -162,6 +162,20 @@ $recentBorrowings = $stmt->fetchAll();
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
+        .sidebar-gradient { background: linear-gradient(180deg, #1e293b 0%, #334155 100%); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-gradient.collapsed { width: 80px; }
+        .sidebar-gradient.collapsed .sidebar-text { opacity: 0; visibility: hidden; }
+        .sidebar-gradient.collapsed .sidebar-icon { margin-right: 0; }
+        .sidebar-gradient.collapsed .sidebar-header h2 { font-size: 0; }
+        .sidebar-gradient.collapsed .sidebar-header .logo-icon { font-size: 1.5rem; }
+        
+        .premium-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
         .modern-shadow {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 8px rgba(0, 0, 0, 0.06);
         }
@@ -229,15 +243,20 @@ $recentBorrowings = $stmt->fetchAll();
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden pt-16 md:pt-0">
         <!-- Top Bar -->
-        <header class="glass-effect z-10 px-8 py-6 flex justify-between items-center border-b border-white/20">
-            <div>
-                <h1 class="text-3xl font-bold gradient-text animate__animated animate__fadeInDown">โปรไฟล์ผู้ใช้</h1>
-                <p class="text-gray-600 text-sm mt-2">จัดการข้อมูลส่วนตัวของคุณ</p>
+        <header class="premium-header z-10 px-8 py-4 flex justify-between items-center border-b border-gray-200/50">
+            <div class="flex items-center space-x-6">
+                <div class="sidebar-toggle hidden md:flex cursor-pointer" id="sidebar-toggle">
+                    <i class="bi bi-list text-2xl text-gray-600 hover:text-purple-600 transition-colors"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800 animate__animated animate__fadeInDown">โปรไฟล์ผู้ใช้</h1>
+                    <p class="text-gray-500 text-xs mt-1">จัดการข้อมูลส่วนตัวและรหัสผ่านของคุณ</p>
+                </div>
             </div>
             <div class="hidden md:block">
-                <span class="glass-effect px-6 py-3 rounded-full text-sm font-medium flex items-center space-x-2">
+                <span class="bg-purple-100 px-6 py-2.5 rounded-full text-sm font-medium flex items-center space-x-2 border border-purple-200">
                     <i class="bi bi-person-circle text-purple-600"></i> 
-                    <span class="gradient-text">User Account</span>
+                    <span class="text-purple-700">User Account</span>
                 </span>
             </div>
         </header>
@@ -317,28 +336,28 @@ $recentBorrowings = $stmt->fetchAll();
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">รหัสนักศึกษา</label>
                                             <input type="text" name="student_id" value="<?php echo htmlspecialchars($currentUser['student_id'] ?? ''); ?>" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
                                                    placeholder="เช่น 640123456">
                                         </div>
                                         
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อผู้ใช้</label>
                                             <input type="text" name="username" value="<?php echo htmlspecialchars($currentUser['username']); ?>" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
                                                    required>
                                         </div>
                                         
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อจริง</label>
                                             <input type="text" name="first_name" value="<?php echo htmlspecialchars($currentUser['first_name'] ?? ''); ?>" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
                                                    placeholder="กรอกชื่อจริง">
                                         </div>
                                         
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">นามสกุล</label>
                                             <input type="text" name="last_name" value="<?php echo htmlspecialchars($currentUser['last_name'] ?? ''); ?>" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
                                                    placeholder="กรอกนามสกุล">
                                         </div>
                                     </div>
@@ -355,21 +374,21 @@ $recentBorrowings = $stmt->fetchAll();
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่านปัจจุบัน <span class="text-red-500">*</span></label>
                                             <input type="password" name="current_password" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
                                                    placeholder="กรอกเฉพาะเมื่อต้องการเปลี่ยนรหัสผ่าน">
                                         </div>
                                         
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่านใหม่</label>
                                             <input type="password" name="new_password" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
                                                    placeholder="อย่างน้อย 6 ตัวอักษร">
                                         </div>
                                         
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">ยืนยันรหัสผ่านใหม่</label>
                                             <input type="password" name="confirm_password" 
-                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all">
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white">
                                         </div>
                                     </div>
                                 </div>
@@ -444,6 +463,10 @@ $recentBorrowings = $stmt->fetchAll();
         $('#mobile-menu-btn').click(function() {
             $('#sidebar').toggleClass('-translate-x-full');
         });
+        
+        // Sidebar Toggle Functionality
+        function toggleSidebar() { $('#sidebar').toggleClass('collapsed'); }
+        $(document).on('click', '#sidebar-toggle', toggleSidebar);
 
         $(document).ready(function() {
             <?php if ($alertScript): ?>

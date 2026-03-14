@@ -1,5 +1,35 @@
-โครงสร้างระบบ 
-📁 Borrowing Management System/
+# 🎓 Borrowing Management System
+
+> 🌟 **ระบบจัดการการยืม-คืนอุปกรณ์สำหรับสถาบันการศึกษา**  
+> 🚀 **Premium UI Design พร้อมฟีเจอร์ครบถ้วน**
+
+## ✨ คุณสมบัติเด่น
+
+### 🎯 หลัก (Core Features)
+- 👥 **จัดการผู้ใช้** - ระบบสมาชิกพร้อมรูปโปรไฟล์
+- 📦 **จัดการอุปกรณ์** - ครบจบครบถ้วน
+- 📋 **จัดการหมวดหมู่** - แยกประเภทอุปกรณ์
+- 🔄 **จัดการการยืม-คืน** - **🆕 ครบถ้วนที่สุด**
+- 📊 **รายงาน** - สถิติและการส่งออก
+
+### 🚀 ฟีเจอร์พิเศษ
+- 📱 **QR Code Scanner** - ระบบรับอุปกรณ์ด้วย QR
+- ✅ **ระบบอนุมัติ** - Workflow การอนุมัติคำร้อง
+- 🗑️ **ถังขยะ & คืนข้อมูล** - **🆕 คืนข้อมูลที่ลบได้**
+- 📅 **ปฏิทิน** - แสดงการยืมในรูปแบบปฏิทิน
+- 📈 **สถิติ Real-time** - อัปเดตข้อมูลทันที
+
+### 🎨 UI/UX พรีเมียม
+- 🌟 **Glass Effect** - พื้นหลังโปร่งแสง
+- 🎨 **Gradient Design** - ไล่สีสวยงาม
+- 📱 **Responsive** - รองรับทุกอุปกรณ์
+- ⚡ **Animations** - เคลื่อนไหวลื่นไหล
+- 🌙 **Dark Mode Ready** - รองรับโหมดมืด
+
+## 🏗️ สถาปัตยกรรมระบบ
+
+```
+� Borrowing Management System/
 ├── 🎯 Core Application/
 │   ├── admin_dashboard.php      # แดชบอร์ด admin
 │   ├── manage_borrowings.php   # 🆕 จัดการการยืม-คืน
@@ -19,253 +49,103 @@
 │   ├── create_deleted_borrowings_table_fixed.sql
 │   ├── add_approval_columns.sql
 │   └── add_pickup_columns.sql
-└── � Documentation/
-    ├── README.md               # � เอกสารนี้
+└── 📚 Documentation/
+    ├── README.md               # 📖 เอกสารนี้
     ├── user_manual.md          # คู่มือผู้ใช้
     └── CONTRIBUTING.md         # แนวทางการมีส่วนร่วม
-## ขั้นตอนการติดตั้ง
-
-### 1. เตรียมสภาพแวดดาน
-```bash
-# Clone repository
-git clone <repository-url>
-cd borrowing-system
-
-# สร้างฐานข้อมูล MySQL
-mysql -u root -p
-CREATE DATABASE equipment_borrowing;
-USE equipment_borrowing;
-source Database/db.sql;
 ```
 
-### 2. กำหนดค่าฐานข้อมูล
-แก้ไฟล์ `config.php` และอัปเดตข้อมูลการเชื่อมต่อฐาน:
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'equipment_borrowing');
-define('DB_USER', 'username');
-define('DB_PASS', 'password');
-```
+## 🛠️ เทคโนโลยีที่ใช้
 
-### 3. เริ่ม Web Server
-```bash
-# ใช้ XAMPP/WAMP/MAMP
-# หรือ PHP Built-in Server
-php -S localhost:8000
+### 🎨 Frontend
+- **Tailwind CSS** - Modern CSS Framework
+- **Bootstrap Icons** - Icon Library
+- **Animate.css** - Animation Library
+- **Chart.js** - Data Visualization
+- **FullCalendar** - Calendar Component
+- **SweetAlert2** - Beautiful Alerts
+- **jQuery** - JavaScript Library
 
-# หรือ Apache/Nginx
-# วางไฟล์ใน Document Root
-```
+### 📱 QR Code & Scanner
+- **html5-qrcode** - QR Code Scanner
+- **Custom QR Generation** - PHP QR Code
 
-### 4. เข้าถึงระบบ
-เปิดเบราวเซอร์ที่: `http://localhost/borrowing/login`
+### 🗄️ Backend
+- **PHP 8+** - Server-side Language
+- **MySQL/MariaDB** - Database
+- **PDO** - Secure Database Access
+- **Sessions** - User Authentication
 
-## โครงสร้าง
+## 🚀 การติดตั้ง
 
-```
-borrowing-system/
-├── Database/
-│   ├── db.sql                 # สคริปตารางฐานข้อมูล
-│   ├── add_approval_columns.sql # คอลัมน์สำหรับระบบอนุมัติ
-│   └── add_student_info.sql     # คอลัมน์ข้อมูลนักศึกษา
-├── Uploads/
-│   ├── equipment/             # รูปภาพอุปกรณ์
-│   └── profiles/              # รูปโปรไฟล์ผู้ใช้
-├── config.php                 # ค่าฐานข้อมูล
-├── login.php                  # หน้าล็อกอิน
-├── logout.php                 # หน้าออกจากระบบ
-├── sidebar.php                # Sidebar สำหรับ Admin
-├── sidebar_user.php          # Sidebar สำหรับ User
-├── admin_dashboard.php        # แดชบอร์ด Admin
-├── user_dashboard.php         # แดชบอร์ด User
-├── approval_dashboard.php     # หน้าอนุมัติคำร้อง
-├── equipment.php              # จัดการอุปกรณ์
-├── admins.php                 # จัดการผู้ใช้
-├── user_history.php           # ประวัติการยืม User
-├── borrowing_dashboard.php     # สถิติการยืม
-├── profile.php                # จัดการโปรไฟล์ User
-├── user_manual.md             # คู่มือการใช้งาน
-└── task.md                   # เอกสารโครงการ
-```
+### 📋 ข้อกำหนดเบื้องต้น
+- PHP 8.0 ขึ้นไป
+- MySQL/MariaDB 5.7 ขึ้นไป
+- Web Server (Apache/Nginx)
+- GD Library (สำหรับรูปภาพ)
 
-## ฐานข้อมูล
+### 🛠️ ขั้นตอนการติดตั้ง
 
-### ตาราง Users
-```sql
-CREATE TABLE `users` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `username` varchar(50) NOT NULL,
-    `password` varchar(255) NOT NULL,
-    `role` enum('admin','user') NOT NULL DEFAULT 'user',
-    `student_id` varchar(20) NULL,
-    `first_name` varchar(100) NULL,
-    `last_name` varchar(100) NULL,
-    `profile_image` varchar(255) DEFAULT 'default.jpg',
-    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `username` (`username`)
-);
-```
+1. **📥 Clone Repository**
+   ```bash
+   git clone https://github.com/sirmommam/borrowing-system.git
+   cd borrowing-system
+   ```
 
-### ตาราง Categories
-```sql
-CREATE TABLE `categories` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(100) NOT NULL,
-    `description` text NULL,
-    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-);
-```
+2. **🗄️ ตั้งค่าฐานข้อมูล**
+   ```sql
+   CREATE DATABASE borrowings_db;
+   -- Import SQL files from Database/ folder
+   ```
 
-### ตาราง Equipment
-```sql
-CREATE TABLE `equipment` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
-    `description` text NULL,
-    `quantity` int(11) NOT NULL DEFAULT 0,
-    `category_id` int(11) NOT NULL,
-    `image` varchar(255) DEFAULT 'default.jpg',
-    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-);
-```
+3. **⚙️ ตั้งค่าการเชื่อมต่อ**
+   (ระบบใช้ Docker Compose สำหรับรันเซิร์ฟเวอร์และฐานข้อมูล)
 
-### ตาราง Borrowings
-```sql
-CREATE TABLE `borrowings` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `user_id` int(11) NOT NULL,
-    `equipment_id` int(11) NOT NULL,
-    `quantity` int(11) NOT NULL,
-    `borrow_date` date NOT NULL,
-    `return_date` date NULL,
-    `status` enum('borrowed','returned') NOT NULL DEFAULT 'borrowed',
-    `approval_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
-    `approved_by` int(11) NULL,
-    `approved_at` timestamp NULL,
-    `rejection_reason` text NULL,
-    `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-    FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`id`)
-);
-```
+4. **🌐 เข้าถึงระบบ**
+   ```
+   http://localhost:8080/ (หรือพอร์ตที่ตั้งค่าไว้)
+   ```
 
-## การใช้งานระบบ
+## 👤 บทบาทผู้ใช้
 
-### สำหรับนักศึกษา
-1. **ล็อกอินเข้าระบบ** ด้วย username และ password
-2. **ดูรายการอุปกรณ์** และสถานะที่มี
-3. **ส่งคำร้องยืม** เลือกอุปกรณ์และจำนวน
-4. **รอการอนุมัติ** จาก Admin อนุมัติคำร้อง
-5. **รับอุปกรณ์** เมื่อได้รับการอนุมัติ
-6. **คืนอุปกรณ์** เมื่อใช้งานเสร็จ
+### 🔑 Admin
+- 📊 จัดการทุกอย่าง
+- ✅ อนุมัติคำร้อง
+- 📈 ดูรายงาน
+- 👥 จัดการผู้ใช้
+- 🗑️ ถังขยะ & คืนข้อมูล
 
-### สำหรับ Admin
-1. **จัดการอุปกรณ์** เพิ่ม/แก้ไข/ลบ
-2. **จัดการผู้ใช้** เพิ่ม/แก้ไข/ลบ
-3. **อนุมัติคำร้อง** อนุมัติหรือปฏิเสธ
-4. **ดูสถิติ** รายงานการใช้งานทั้งหมด
+### 👤 Member
+- 📦 ยืมอุปกรณ์
+- 📋 ดูประวัติ
+- 👤 จัดการโปรไฟล์
+- 📱 สแกน QR รับอุปกรณ์
 
-## ความปลอดภัย
+## 🎯 ฟีเจอร์หลัก
 
-- ✅ **Prepared Statements** ป้องกัน SQL Injection
-- ✅ **Password Hashing** ใช้ `password_hash()` และ `password_verify()`
-- ✅ **Session Management** ควบคุมสถานะการล็อกอิน
-- ✅ **Input Validation** ตรวจสอบข้อมูลทุกครั้ง
-- ✅ **CSRF Protection** ใช้ session tokens
-- ✅ **XSS Prevention** ใช้ `htmlspecialchars()` และ `strip_tags()`
+### 📋 จัดการการยืม-คืน (🆕)
+- ✏️ **แก้ไขข้อมูล** - แก้ไขวันที่ สถานะ
+- 🔄 **คืนอุปกรณ์** - คืนอัตโนมัติ
+- 🗑️ **ลบคำร้อง** - ลบข้อมูลที่ไม่อนุมัติ
+- 📦 **ถังขยะ** - เก็บข้อมูลที่ถูกลบ
+- ♻️ **คืนข้อมูล** - คืนข้อมูลกลับมาได้
 
-## เทคโนโลยีที่ใช้
+### 📱 QR Code System
+- 📸 **Generate QR** - สร้าง QR สำหรับรับ
+- 📷 **QR Scanner** - สแกน QR ยืนยันรับ
+- ⏰ **Time-based** - QR หมดอายุ 5 นาที
+- 🔐 **Security** - Checksum validation
 
-- **PHP 8+**: ภาษาฝั่งฝั่ง
-- **MySQL 8.0+**: ระบบจัดการข้อมูล
-- **Tailwind CSS**: Framework CSS สำหรับการออกแบบ UI
-- **jQuery**: JavaScript Library สำหรับ DOM Manipulation
-- **jQuery Confirm**: สำหรับการแจ้งเตือนที่สวยงงาม
-- **Animate.css**: Animation library สำหรับ UI Effects
-- **Bootstrap Icons**: Icon library
+### 📊 รายงาน & สถิติ
+- 📈 **Real-time** - อัปเดตทันที
+- 📊 **Statistics** - สถิติทั้งหมด
+- 📤 **Export CSV** - ส่งออกข้อมูล
+- 📅 **Date Range** - กรองตามวันที่
 
-## การปรับแต่งและพัฒนา
+## 👨‍💻 ผู้พัฒนา
 
-### การเพิ่มฟีเจอร์ใหม่
-1. แก้ไฟล์ใน `Database/` สำหรับ feature ใหม่
-2. อัปเดตตารางฐานข้อมูลตามต้องการ
-3. สร้าง PHP Controller สำหรับจัดการ
-4. สร้าง View และเพิ่ม JavaScript สำหรับ interaction
-5. อัปเดต sidebar และ navigation
-
-### การปรับแต่งฐานข้อมูล
-1. สร้าง migration script ใหม่ `.sql` ไฟล์
-2. อัปเดต `config.php` สำหรับการเชื่อมต่อฐานใหม่
-3. รัน script เพื่ออัปเดตโครงสร้าง
-4. ทดสอบการทำงานของฟีเจอร์ใหม่
-
-## การ Deploy
-
-### บน Local Development
-```bash
-# ใช้ XAMPP
-1. ติดตั้ง XAMPP
-2. วางไฟล์ใน `htdocs/borrowing/`
-3. เปิด `http://localhost/borrowing`
-
-# ใช้ Docker (แนะแนะ)
-FROM php:8.0-apache
-COPY . /var/www/html/
-RUN docker-php-ext-install pdo_mysql
-```
-
-### บน Production Server
-- อัปโหลดไปยังเซิร์ฟ์เวอร์ที่รองรับ PHP
-- ตั้งค่า PHP memory limit และ execution time
-- ใช้ HTTPS (SSL Certificate)
-- ตั้งค่า MySQL ตามความการใช้งาน
-- สำรอง Backup และ Recovery Plan
-
-## การทดสอบ
-
-### การทดสอบฟังก์ชัน
-```bash
-# ทดสอบ PHP Syntax
-php -l filename.php
-
-# ทดสอบ Database Connection
-mysql -u username -p database_name
-
-# ทดสอบ SQL Query
-mysql -u username -p database_name -e "SELECT * FROM table"
-```
-
-### การทดสอบฟีเจอร์
-- ทดสอบการ Login/Logout
-- ทดสอบการ CRUD อุปกรณ์
-- ทดสอบการยืม-คืน
-- ทดสอบการอนุมัติ
-- ทดสอบ responsive design
-
-## License
-
-โปรเจคนดภายให้้สัญญาต่อ MIT License
-
-## ผู้พัฒนา
-
-- [Developer Name] - Full Stack Developer
-- [Email] - sittipong.pu@gmail.com
-- [GitHub] - https://github.com/sirmommam/borrowing-system
-
-## ประวัติอัปเดต
-
-- **Version 1.0** - ระบบพื้นฐานพร้อมฟีเจอร์พื้นฐาน
-- **Version 1.1** - เพิ่มระบบอนุมัติคำร้อง
-- **Version 1.2** - เพิ่มจัดการโปรไฟล์ผู้ใช้
-- **Version 1.3** - ปรับปรุง UI และ UX ให้สวยงงามขึ้น
-- **Version 1.4** - เพิ่มคู่มือการใช้งานและเอกสารสำหรับนักพัฒนา
+พัฒนาด้วย ❤️ สำหรับสถาบันการศึกษา
 
 ---
 
-**หมายเหตุถลมเพียงความความสำคัญและมาตรฐานที่ได้สร้างขึ้นมาเพื่อให้เป็นระบบที่สมบูรณม์และใช้งานได้อย่างง่าย** 🚀
+**🚀 พร้อมใช้งานแล้ว - ติดตั้งง่าย - ฟีเจอร์ครบถ้วน!**

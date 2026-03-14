@@ -78,6 +78,81 @@ if (isset($_POST['qr_data'])) {
     }
 }
 
+// Handle Manual confirmation (ยืนยันแบบไม่ต้องสแกน)
+if (isset($_POST['manual_confirm']) && isset($_POST['borrowing_id'])) {
+    $borrowing_id = $_POST['borrowing_id'];
+    
+    // ตรวจสอบข้อมูลการยืม
+    $stmt = $pdo->prepare("
+        SELECT b.*, e.name as equipment_name, u.username, u.first_name, u.last_name 
+        FROM borrowings b 
+        JOIN equipment e ON b.equipment_id = e.id 
+        JOIN users u ON b.user_id = u.id 
+        WHERE b.id = ? AND b.approval_status = 'approved' AND b.status = 'borrowed'
+    ");
+    $stmt->execute([$borrowing_id]);
+    $borrowing = $stmt->fetch();
+    
+    if (!$borrowing) {
+        echo json_encode(['success' => false, 'message' => 'ไม่พบข้อมูลการยืมที่ถูกต้อง']);
+        exit;
+    }
+    
+    if ($borrowing['pickup_confirmed']) {
+        echo json_encode(['success' => false, 'message' => 'อุปกรณ์นี้ได้รับการยืนยันการรับแล้ว']);
+        exit;
+    }
+    
+    $pdo->beginTransaction();
+    try {
+        $stmt = $pdo->prepare("UPDATE borrowings SET pickup_confirmed = 1, pickup_time = NOW(), approved_by = ?, approved_at = NOW() WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id'], $borrowing_id]);
+        $pdo->commit();
+        
+        echo json_encode(['success' => true, 'message' => 'ยืนยันการรับอุปกรณ์สำเร็จ (รับด้วยตนเอง)', 'borrowing' => $borrowing]);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()]);
+    }
+    exit;
+}
+
+// Handle AJAX request for recent confirmations
+if (isset($_GET['recent'])) {
+    $stmt = $pdo->prepare("
+        SELECT b.*, e.name as equipment_name, u.username, u.first_name, u.last_name 
+        FROM borrowings b 
+        JOIN equipment e ON b.equipment_id = e.id 
+        JOIN users u ON b.user_id = u.id 
+        WHERE b.pickup_confirmed = 1 
+        ORDER BY b.pickup_time DESC 
+        LIMIT 5
+    ");
+    $stmt->execute();
+    $confirmations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'confirmations' => $confirmations]);
+    exit;
+}
+
+// Handle AJAX request for pending pickups
+if (isset($_GET['pending'])) {
+    $stmt = $pdo->query("
+        SELECT b.*, e.name as equipment_name, u.username, u.first_name, u.last_name 
+        FROM borrowings b 
+        JOIN equipment e ON b.equipment_id = e.id 
+        JOIN users u ON b.user_id = u.id 
+        WHERE b.approval_status = 'approved' AND b.status = 'borrowed' AND (b.pickup_confirmed IS NULL OR b.pickup_confirmed = 0)
+        ORDER BY b.borrow_date DESC
+    ");
+    $pending = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'pending' => $pending]);
+    exit;
+}
+
 // Get pending pickups for display
 $pending_pickups = $pdo->query("
     SELECT b.*, e.name as equipment_name, u.username, u.first_name, u.last_name 
@@ -315,11 +390,11 @@ $pending_pickups = $pdo->query("
                         
                         <div>
                             <h3 class="font-semibold text-gray-800 mb-4">รายการที่รอการรับ</h3>
-                            <div class="space-y-3 max-h-96 overflow-y-auto">
+                            <div id="pendingPickupsList" class="space-y-3 max-h-96 overflow-y-auto">
                                 <?php if (count($pending_pickups) > 0): ?>
                                     <?php foreach ($pending_pickups as $pickup): ?>
                                         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                            <div class="flex justify-between items-start">
+                                            <div class="flex justify-between items-start mb-3">
                                                 <div>
                                                     <p class="font-medium text-gray-800"><?php echo htmlspecialchars($pickup['equipment_name']); ?></p>
                                                     <p class="text-sm text-gray-600"><?php echo htmlspecialchars($pickup['first_name'] . ' ' . $pickup['last_name']); ?></p>
@@ -329,6 +404,10 @@ $pending_pickups = $pdo->query("
                                                     รอรับ
                                                 </span>
                                             </div>
+                                            <button onclick="manualConfirm(<?php echo $pickup['id']; ?>)" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center">
+                                                <i class="bi bi-check2-circle mr-2"></i> 
+                                                ยืนยันรับของ (ไม่ต้องสแกน)
+                                            </button>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
@@ -400,6 +479,7 @@ $pending_pickups = $pdo->query("
                     if (response.success) {
                         showSuccessMessage(response.message, response.borrowing);
                         loadRecentConfirmations();
+                        loadPendingPickups();
                     } else {
                         showErrorMessage(response.message);
                     }
@@ -463,6 +543,30 @@ $pending_pickups = $pdo->query("
             }
         }
 
+        // ฟังก์ชันกดยืนยันรับของด้วยตนเอง
+        function manualConfirm(borrowingId) {
+            if(confirm('ยืนยันการรับอุปกรณ์รายการนี้ โดยไม่ต้องสแกน QR Code ใช่หรือไม่?')) {
+                $.ajax({
+                    url: 'qr_scan.php',
+                    method: 'POST',
+                    data: { manual_confirm: 1, borrowing_id: borrowingId },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            showSuccessMessage(response.message, response.borrowing);
+                            loadRecentConfirmations();
+                            loadPendingPickups();
+                        } else {
+                            showErrorMessage(response.message);
+                        }
+                    },
+                    error: function() {
+                        showErrorMessage('เกิดข้อผิดพลาดในการสื่อสารกับเซิร์ฟเวอร์');
+                    }
+                });
+            }
+        }
+
         function showSuccessMessage(message, borrowing) {
             const alertHtml = `
                 <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg mb-4">
@@ -475,7 +579,7 @@ $pending_pickups = $pdo->query("
                             ${borrowing ? `
                                 <p class="text-green-600 text-sm mt-1">
                                     อุปกรณ์: ${borrowing.equipment_name} | 
-                                    ผู้รับ: ${borrowing.first_name} ${borrowing.last_name} | 
+                                    ผู้รับ: ${(borrowing.first_name && borrowing.last_name) ? borrowing.first_name + ' ' + borrowing.last_name : borrowing.username} | 
                                     จำนวน: ${borrowing.quantity} ชิ้น
                                 </p>
                             ` : ''}
@@ -523,12 +627,13 @@ $pending_pickups = $pdo->query("
                         
                         if (confirmations.length > 0) {
                             confirmations.forEach(conf => {
+                                const userName = (conf.first_name && conf.last_name) ? `${conf.first_name} ${conf.last_name}` : conf.username;
                                 html += `
                                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                         <div class="flex justify-between items-start">
                                             <div>
                                                 <p class="font-medium text-gray-800">${conf.equipment_name}</p>
-                                                <p class="text-sm text-gray-600">${conf.first_name} ${conf.last_name}</p>
+                                                <p class="text-sm text-gray-600">${userName}</p>
                                                 <p class="text-xs text-gray-500">เวลา: ${conf.pickup_time}</p>
                                             </div>
                                             <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
@@ -544,6 +649,49 @@ $pending_pickups = $pdo->query("
                         }
                         
                         $('#recentConfirmations').html(html);
+                    }
+                }
+            });
+        }
+
+        function loadPendingPickups() {
+            $.ajax({
+                url: 'qr_scan.php',
+                method: 'GET',
+                data: { pending: true },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        const pending = response.pending || [];
+                        let html = '';
+                        
+                        if (pending.length > 0) {
+                            pending.forEach(p => {
+                                const userName = (p.first_name && p.last_name) ? `${p.first_name} ${p.last_name}` : p.username;
+                                html += `
+                                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <p class="font-medium text-gray-800">${p.equipment_name}</p>
+                                                <p class="text-sm text-gray-600">${userName}</p>
+                                                <p class="text-xs text-gray-500">จำนวน: ${p.quantity} ชิ้น</p>
+                                            </div>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                                                รอรับ
+                                            </span>
+                                        </div>
+                                        <button onclick="manualConfirm(${p.id})" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center">
+                                            <i class="bi bi-check2-circle mr-2"></i> 
+                                            ยืนยันรับของ (ไม่ต้องสแกน)
+                                        </button>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            html = '<p class="text-gray-500 text-center py-8">ไม่มีรายการที่รอการรับ</p>';
+                        }
+                        
+                        $('#pendingPickupsList').html(html);
                     }
                 }
             });
